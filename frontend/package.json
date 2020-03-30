@@ -11,6 +11,8 @@
     "@testing-library/user-event": "^7.1.2",
     "d3": "^5.5.0",
     "file-saver": "^2.0.2",
+    "jsoneditor": "^8.6.4",
+    "jsoneditor-react": "^3.0.0",
     "react": "^16.13.0",
     "react-d3-graph": "^2.4.1",
     "react-dom": "^16.13.0",
