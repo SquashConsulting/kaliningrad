@@ -85,7 +85,11 @@ export const Dialog = () => {
   };
 
   return (
-    <DialogCore name={TYPE} action={{ handler: handleCreate, label: 'Create' }}>
+    <DialogCore
+      name={TYPE}
+      fullScreen
+      action={{ handler: handleCreate, label: 'Create' }}
+    >
       <DialogContent className={classes.content}>
         <Editor
           value={json}
