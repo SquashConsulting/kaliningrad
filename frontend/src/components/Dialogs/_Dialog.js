@@ -7,7 +7,13 @@ import DialogActions from '@material-ui/core/DialogActions';
 
 import { UIContext } from 'contexts/ui';
 
-const _Dialog = ({ children, title, name, action: { handler, label } }) => {
+const _Dialog = ({
+  name,
+  title,
+  children,
+  action: { handler, label },
+  ...rest
+}) => {
   const {
     setDialogs,
     dialogs: { [name]: open },
@@ -27,6 +33,7 @@ const _Dialog = ({ children, title, name, action: { handler, label } }) => {
       open={open}
       onClose={handleClose}
       aria-labelledby="form-dialog-title"
+      {...rest}
     >
       <DialogTitle id="form-dialog-title">{title}</DialogTitle>
       {children}

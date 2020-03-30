@@ -38,14 +38,15 @@ export const Dialog = () => {
     >
       <DialogContent>
         <DialogContentText>
-          Please note that this file must be processed through Kalinigrad.
+          Please note that this file must be processed through Kalinigrad{' '}
+          <b>only</b>.
         </DialogContentText>
         <TextField
           autoFocus
           fullWidth
           value={name}
-          label="File Name"
           onChange={handleNameChange}
+          label="File Name (without the extension)"
         />
       </DialogContent>
     </DialogCore>
