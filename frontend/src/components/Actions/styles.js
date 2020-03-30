@@ -11,6 +11,6 @@ export default makeStyles(theme => ({
   },
   tooltip: {
     textAlign: 'center',
-    width: 'calc(100% + 80px)',
+    width: 'calc(100% + 100px)',
   },
 }));

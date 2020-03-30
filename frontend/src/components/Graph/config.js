@@ -1,6 +1,6 @@
 export default {
   width: 900,
-  height: 500,
+  height: 600,
   maxZoom: 4,
   minZoom: 1,
   directed: true,
