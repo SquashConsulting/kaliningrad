@@ -15,17 +15,12 @@ const Home = () => {
   const { backdropOpen } = useContext(UIContext);
 
   return (
-    <>
+    <div className={classes.root}>
       <Backdrop className={classes.backdrop} open={backdropOpen} />
-      <div className={classes.root}>
-        <div className={classes.graph}>
-          <Graph />
-        </div>
-        <div className={classes.controls}></div>
-      </div>
+      <Graph />
       <Actions />
       <Dialogs />
-    </>
+    </div>
   );
 };
 
