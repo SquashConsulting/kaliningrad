@@ -6,6 +6,7 @@ import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 
 import SaveIcon from '@material-ui/icons/Save';
 import LoadIcon from '@material-ui/icons/Publish';
+import ResetIcon from '@material-ui/icons/Restore';
 import NodeIcon from '@material-ui/icons/AddCircle';
 import CollectionIcon from '@material-ui/icons/Share';
 import LinkIcon from '@material-ui/icons/PlayForWork';
@@ -13,8 +14,8 @@ import LinkIcon from '@material-ui/icons/PlayForWork';
 import { UIContext } from 'contexts/ui';
 import { GraphContext } from 'contexts/graph';
 
+import Dialog from './Dialog';
 import useStyles from './styles';
-import ErrorDialog from './Error';
 
 const Actions = () => {
   const classes = useStyles();
@@ -22,8 +23,9 @@ const Actions = () => {
   const fileUploader = useRef(null);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(false);
+  const [confirm, setConfirm] = useState(false);
 
-  const { loadGraph } = useContext(GraphContext);
+  const { loadGraph, resetGraph } = useContext(GraphContext);
   const { setBackdropOpen, setDialogs } = useContext(UIContext);
 
   const actions = [
@@ -36,6 +38,11 @@ const Actions = () => {
       type: 'upload',
       icon: <LoadIcon />,
       name: 'Load Graph',
+    },
+    {
+      type: 'reset',
+      icon: <ResetIcon />,
+      name: 'Reset Graph',
     },
     {
       type: 'collection',
@@ -53,12 +60,6 @@ const Actions = () => {
       icon: <LinkIcon className={classes.icon} />,
     },
   ];
-
-  const handler = type => () => {
-    if (type !== 'upload') return setDialogs(type)(true);
-
-    fileUploader.current.click();
-  };
 
   const handleUpload = async ({ target: { files } }) => {
     try {
@@ -92,10 +93,38 @@ const Actions = () => {
     setError(false);
   };
 
+  const handleConfirmClose = () => {
+    setConfirm(false);
+  };
+
+  const handleReset = () => {
+    resetGraph();
+    handleConfirmClose();
+  };
+
+  const typeToAction = {
+    upload: () => fileUploader.current.click(),
+    reset: () => setConfirm(true),
+  };
+
+  const handler = type => () => {
+    if (Object.keys(typeToAction).includes(type)) return typeToAction[type]();
+
+    setDialogs(type)(true);
+  };
+
   return (
     <div className={classes.root}>
+      <Dialog
+        open={confirm}
+        title="Are you sure?"
+        handler={handleReset}
+        handleClose={handleConfirmClose}
+        message="If you click okay your current state will be erased."
+      />
       {error && (
-        <ErrorDialog
+        <Dialog
+          title="Whoops!"
           open={!!error}
           message={error}
           handleClose={handleErrorClose}
