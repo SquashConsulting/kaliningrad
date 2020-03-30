@@ -1,5 +1,6 @@
 import React, { useState, createContext } from 'react';
 
+import arrayEqual from 'utils/arrayEqual';
 import filterObject from 'utils/filterObject';
 
 /**
@@ -15,6 +16,9 @@ const localState = window.localStorage.getItem('kalinigrad_state');
 const defaultState = localState
   ? JSON.parse(localState)
   : {
+      __meta__: {
+        users: 2,
+      },
       collections: {
         users: {
           username: {
@@ -59,9 +63,50 @@ export const GraphContext = createContext(defaultState);
 const GraphContextProvider = ({ children }) => {
   const [data, setData] = useState(defaultState);
 
+  //***************//
+  // Graph Actions //
+  //***************//
+
   const updateState = newState => {
     setData(newState);
     window.localStorage.setItem('kalinigrad_state', JSON.stringify(newState));
+  };
+
+  /**
+   *
+   * @param {string} contents
+   */
+  const loadGraph = contents => {
+    const graph = JSON.parse(contents);
+    const error = new Error(
+      'Invalid file format, please use a valid Kalinigrad graph',
+    );
+
+    if (!arrayEqual(Object.keys(defaultState), Object.keys(graph))) throw error;
+
+    if (
+      !Object.values(graph.collections).every(collection =>
+        Object.values(collection).every(
+          field =>
+            Object.keys(field).length === 2 &&
+            ['string', 'number', 'boolean'].includes(field.type) &&
+            typeof field.required === typeof true,
+        ),
+      )
+    )
+      throw error;
+
+    if (
+      !Object.values(graph.edges).every(
+        edge =>
+          Object.keys(edge).length === 2 &&
+          typeof edge._from === 'string' &&
+          typeof edge._to === 'string',
+      )
+    )
+      throw error;
+
+    updateState(graph);
   };
 
   //*************************//
@@ -143,6 +188,10 @@ const GraphContextProvider = ({ children }) => {
     updateState({
       ...data,
       nodes: [...data.nodes, node],
+      __meta__: {
+        ...data.__meta__,
+        [node.collection]: data.__meta__[node.collection] + 1,
+      },
     });
   };
 
@@ -190,6 +239,7 @@ const GraphContextProvider = ({ children }) => {
         addNode,
         addLink,
         setEdge,
+        loadGraph,
         removeEdge,
         removeNode,
         removeLink,

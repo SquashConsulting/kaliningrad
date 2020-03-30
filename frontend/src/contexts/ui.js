@@ -16,6 +16,7 @@ const defaultState = {
     node: false,
     link: false,
     save: false,
+    collection: false,
   },
 };
 

@@ -22,12 +22,9 @@ export const Dialog = () => {
   };
 
   const handler = () => {
-    const blob = new Blob(
-      [JSON.stringify({ collections: data.collections, edges: data.edges })],
-      {
-        type: 'application/json',
-      },
-    );
+    const blob = new Blob([JSON.stringify(data)], {
+      type: 'application/json',
+    });
 
     FileSaver.saveAs(blob, `${name}.json`);
     setDialogs(TYPE)(false);
