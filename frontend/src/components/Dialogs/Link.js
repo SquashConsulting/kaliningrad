@@ -27,6 +27,7 @@ export const Dialog = () => {
     addLink,
     data: { nodes, edges, links },
   } = useContext(GraphContext);
+
   const {
     setDialogs,
     dialogs: { [TYPE]: open },
@@ -85,10 +86,6 @@ export const Dialog = () => {
     setState({ ...state, [type]: value || '' });
   };
 
-  const handleNameChange = ({ target: { value } }) => {
-    setState({ ...state, edge: value });
-  };
-
   const renderOptions = type => {
     const acceptedNodes = type === '_from' ? nodes : validNodes;
 
@@ -139,7 +136,7 @@ export const Dialog = () => {
                 margin="dense"
                 label="Edge Name"
                 value={state.edge}
-                onChange={handleNameChange}
+                onChange={handleChange('edge')}
               />
             </FormControl>
             <FormControl className={classes.formControl}>
