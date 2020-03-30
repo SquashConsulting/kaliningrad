@@ -50,6 +50,9 @@ export const Dialog = () => {
         nodes.filter(
           node =>
             node.id !== state._from &&
+            (edges[state.edge]
+              ? node.collection === edges[state.edge]._to
+              : true) &&
             !links.find(
               ({ source, target }) =>
                 target === node.id && source === state._from,
@@ -57,7 +60,7 @@ export const Dialog = () => {
         ),
       );
     }
-  }, [state._from, nodes, links]);
+  }, [state._from, state.edge, edges, nodes, links]);
 
   const handleCreate = () => {
     setError(null);
@@ -74,10 +77,15 @@ export const Dialog = () => {
     if (!edges[edgeName]) {
       const fromCollection = nodes.find(node => node.id === _from).collection;
       const toCollection = nodes.find(node => node.id === _to).collection;
-      setEdge(edgeName, { _from: fromCollection, _to: toCollection });
-    }
 
-    addLink({ edge: edgeName, source: _from, target: _to });
+      setEdge(
+        edgeName,
+        { _from: fromCollection, _to: toCollection },
+        { source: _from, target: _to },
+      );
+    } else {
+      addLink({ edge: edgeName, source: _from, target: _to });
+    }
 
     setDialogs(TYPE)(false);
   };

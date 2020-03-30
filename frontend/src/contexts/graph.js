@@ -8,55 +8,54 @@ import filterObject from 'utils/filterObject';
  * @typedef {{ _from: string, _to: string }} EdgeAttribute
  * @typedef {{ type: string, required: boolean }} Attribute
  * @typedef {{ edge: string, source: string, target: string }} Edge
- * @typedef {{ id: string, label: string, collection: string }} Node
+ * @typedef {{ id: string, label: string, collection: string, size?: number }} Node
  */
 
 const localState = window.localStorage.getItem('kalinigrad_state');
+const initialState = {
+  __meta__: {
+    users: 2,
+  },
+  collections: {
+    users: {
+      username: {
+        type: 'string',
+        required: true,
+      },
+      name: {
+        type: 'string',
+        required: false,
+      },
+    },
+  },
+  edges: {
+    follows: {
+      _to: 'users',
+      _from: 'users',
+    },
+  },
+  nodes: [
+    {
+      id: 'users/1',
+      label: 'User 1',
+      collection: 'users',
+    },
+    {
+      id: 'users/2',
+      label: 'User 2',
+      collection: 'users',
+    },
+  ],
+  links: [
+    {
+      edge: 'follows',
+      source: 'users/1',
+      target: 'users/2',
+    },
+  ],
+};
 
-const defaultState = localState
-  ? JSON.parse(localState)
-  : {
-      __meta__: {
-        users: 2,
-      },
-      collections: {
-        users: {
-          username: {
-            type: 'string',
-            required: true,
-          },
-          name: {
-            type: 'string',
-            required: false,
-          },
-        },
-      },
-      edges: {
-        follows: {
-          _to: 'users',
-          _from: 'users',
-        },
-      },
-      nodes: [
-        {
-          id: 'users/1',
-          label: 'User 1',
-          collection: 'users',
-        },
-        {
-          id: 'users/2',
-          label: 'User 2',
-          collection: 'users',
-        },
-      ],
-      links: [
-        {
-          edge: 'follows',
-          source: 'users/1',
-          target: 'users/2',
-        },
-      ],
-    };
+const defaultState = localState ? JSON.parse(localState) : initialState;
 
 export const GraphContext = createContext(defaultState);
 
@@ -70,6 +69,13 @@ const GraphContextProvider = ({ children }) => {
   const updateState = newState => {
     setData(newState);
     window.localStorage.setItem('kalinigrad_state', JSON.stringify(newState));
+  };
+
+  /**
+   *
+   */
+  const resetGraph = () => {
+    updateState(initialState);
   };
 
   /**
@@ -123,6 +129,7 @@ const GraphContextProvider = ({ children }) => {
   const setCollection = (name, attributes) => {
     updateState({
       ...data,
+      __meta__: { ...data.__meta__, [name]: 0 },
       collections: { ...data.collections, [name]: attributes },
     });
   };
@@ -158,11 +165,13 @@ const GraphContextProvider = ({ children }) => {
    *
    * @param {string} name name of the edge
    * @param {EdgeAttribute | null} attributes edge definitions
+   * @param {Edge} link the new link
    */
-  const setEdge = (name, attributes) => {
+  const setEdge = (name, attributes, link) => {
     updateState({
       ...data,
       edges: { ...data.edges, [name]: attributes },
+      links: [...data.links, { ...link, edge: name }],
     });
   };
 
@@ -190,9 +199,20 @@ const GraphContextProvider = ({ children }) => {
       nodes: [...data.nodes, node],
       __meta__: {
         ...data.__meta__,
-        [node.collection]: data.__meta__[node.collection] + 1,
+        [node.collection]: (data.__meta__[node.collection] || 0) + 1,
       },
     });
+  };
+
+  /**
+   *
+   * @param {string} nodeIndex index of the node
+   * @param {Node} newNode new node
+   */
+  const updateNode = (nodeIndex, newNode) => {
+    const newNodes = [...data.nodes];
+    newNodes[nodeIndex] = newNode;
+    updateState({ ...data, nodes: newNodes });
   };
 
   /**
@@ -240,7 +260,9 @@ const GraphContextProvider = ({ children }) => {
         addLink,
         setEdge,
         loadGraph,
+        resetGraph,
         removeEdge,
+        updateNode,
         removeNode,
         removeLink,
         setCollection,
