@@ -1,0 +1,22 @@
+{
+  "name": "generator",
+  "version": "0.0.0",
+  "description": "Kaliningrad project generator",
+  "main": "dist/entry.js",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p ."
+  },
+  "devDependencies": {
+    "@types/lodash.omit": "^4.5.6",
+    "@types/node": "^13.5.0",
+    "@types/yargs": "^15.0.4",
+    "tslint": "^6.0.0",
+    "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "gitly": "^1.1.5",
+    "lodash.omit": "^4.5.0",
+    "yargs": "^15.3.1"
+  }
+}
