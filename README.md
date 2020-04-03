@@ -10,11 +10,11 @@ Kalinigrad is consisted of a couple of layers.
 
 ## Frontend (In Progress)
 
-The frontend client is a React JS application that loads, visualizes, and produces a Kalinigrad graph structure.
+The frontend client is a React JS application that loads, visualizes, and produces a Kaliningrad graph structure.
 
 ## Parser (In Progress)
 
-The parser takes a Kalinigrad graph and generates an AST or some sort of instruction set(TBD) for the Project Generator.
+The parser takes a Kaliningrad graph and generates an AST or some sort of instruction set(TBD) for the Project Generator.
 
 ## Project Generator (TBD)
 
@@ -26,4 +26,4 @@ This Proxy is used for BLL <-> DAL communication
 
 ## Template Microservice (In Progress)
 
-Typescript powered DAL microservice macro-programmable template to be using during the Project Generation stage.
+Typescript powered DAL microservice macro-programmable template to be used during the Project Generation stage.
