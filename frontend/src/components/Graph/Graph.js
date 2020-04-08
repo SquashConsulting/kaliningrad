@@ -16,8 +16,8 @@ const Graph = () => {
       {...{
         data,
         config,
-        onClickLink: setSelected('link'),
-        onClickNode: setSelected('node'),
+        onClickLink: setSelected('edge'),
+        onClickNode: setSelected('collection'),
       }}
     />
   );

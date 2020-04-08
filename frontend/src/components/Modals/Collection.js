@@ -1,53 +1,61 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { JsonEditor as Editor } from 'jsoneditor-react';
 
+import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import DialogContent from '@material-ui/core/DialogContent';
 
 import { UIContext } from 'contexts/ui';
 import { GraphContext } from 'contexts/graph';
 
 import useStyles from './styles';
-import DialogCore from './_Dialog';
+import ModalCore from './_Modal';
 import 'jsoneditor-react/es/editor.min.css';
 
 export const TYPE = 'collection';
 
-export const Dialog = () => {
+export const Modal = () => {
   const classes = useStyles();
-  const { setDialogs } = useContext(UIContext);
+
   const {
-    data: { collections },
+    setModals,
+    modals: {
+      [TYPE]: { name },
+    },
+  } = useContext(UIContext);
+
+  const {
     setCollection,
+    data: { collections },
   } = useContext(GraphContext);
 
   const [error, setError] = useState(false);
   const [showMsg, setShowMsg] = useState(false);
-  const [json, setJson] = useState({
-    collectionName: {
-      field: {
-        type: 'string',
-        required: true,
-      },
-    },
-  });
+  const [json, setJson] = useState({ [name]: collections[name] });
 
-  const handleCreate = () => {
+  useEffect(() => {
+    if (name) {
+      setJson({ [name]: collections[name] });
+    }
+  }, [name, collections]);
+
+  const handleEdit = () => {
     // refactor this validation to use JSON::Schema instead
     if (error) return setShowMsg('Please fix your JSON to continue');
 
     if (Object.keys(json).length !== 1)
       return setShowMsg(
         <span>
-          Your schema must have only one top-level field
+          Your schema must have only one root-level field
           <ul>
             <li>the collection name</li>
           </ul>
         </span>,
       );
 
-    if (collections[Object.keys(json)[0]])
-      return setShowMsg('A collection with that name already exists');
+    if (!collections[Object.keys(json)[0]])
+      return setShowMsg(
+        'You cannot modify the collection name, please instead create a new collection',
+      );
 
     if (
       Object.values(Object.values(json)[0]).some(
@@ -73,10 +81,9 @@ export const Dialog = () => {
         </span>,
       );
 
-    const collectionName = Object.keys(json)[0];
-    setCollection(collectionName, json[collectionName]);
+    setCollection(name, json[name]);
 
-    setDialogs(TYPE)(false);
+    setModals(TYPE)(false);
   };
 
   const handleError = (errors) => {
@@ -84,13 +91,15 @@ export const Dialog = () => {
     setError(!!errors.length);
   };
 
+  const title = (
+    <span>
+      Editing collection <code>"{name}"</code>
+    </span>
+  );
+
   return (
-    <DialogCore
-      fullScreen
-      name={TYPE}
-      action={{ handler: handleCreate, label: 'Create' }}
-    >
-      <DialogContent className={classes.content}>
+    <ModalCore name={TYPE} title={title}>
+      <>
         <Editor
           value={json}
           navigationBar
@@ -112,6 +121,11 @@ export const Dialog = () => {
             },
           ]}
         />
+        <div className={classes.contentButton}>
+          <Button variant="contained" color="primary" onClick={handleEdit}>
+            Edit
+          </Button>
+        </div>
         {showMsg && (
           <Typography
             component="div"
@@ -122,7 +136,7 @@ export const Dialog = () => {
             {showMsg}
           </Typography>
         )}
-      </DialogContent>
-    </DialogCore>
+      </>
+    </ModalCore>
   );
 };

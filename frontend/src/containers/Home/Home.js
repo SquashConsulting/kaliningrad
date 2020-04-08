@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import Backdrop from '@material-ui/core/Backdrop';
 
 import Graph from 'components/Graph';
+import Modals from 'components/Modals';
 import Actions from 'components/Actions';
 import Dialogs from 'components/Dialogs';
 
@@ -18,6 +19,7 @@ const Home = () => {
     <div className={classes.root}>
       <Backdrop className={classes.backdrop} open={backdropOpen} />
       <Graph />
+      <Modals />
       <Actions />
       <Dialogs />
     </div>

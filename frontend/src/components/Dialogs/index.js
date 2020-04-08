@@ -8,6 +8,8 @@ import * as Collection from './Collection';
 const all = [Collection, Link, Save, Node];
 
 const Dialogs = () =>
-  all.map(Component => <Component.Dialog key={Component.TYPE} />);
+  all.map((Component) => (
+    <Component.Dialog key={`dialogs-${Component.TYPE}`} />
+  ));
 
 export default Dialogs;

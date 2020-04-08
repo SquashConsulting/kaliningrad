@@ -8,9 +8,15 @@ import { GraphContext } from 'contexts/graph';
 
 const defaultState = {
   backdropOpen: false,
-  selected: {
-    type: null,
-    name: null,
+  modals: {
+    edge: {
+      name: null,
+      open: false,
+    },
+    collection: {
+      name: null,
+      open: false,
+    },
   },
   dialogs: {
     node: false,
@@ -33,7 +39,7 @@ const UIContextProvider = ({ children }) => {
    *
    * @param {boolean} backdropOpen
    */
-  const setBackdropOpen = backdropOpen => {
+  const setBackdropOpen = (backdropOpen) => {
     setState({ ...state, backdropOpen });
   };
 
@@ -41,38 +47,56 @@ const UIContextProvider = ({ children }) => {
    *
    * @param {("node" | "link")} type either `node` or `link`
    */
-  const setSelected = type =>
+  const setSelected = (type) =>
     /**
      * @param {(Link | string)} entity either nodeId or link source
      * @param {(string | undefined)} target link `target` if type if 'link', `undefined` otherwise
      */
     (entity, target) => {
       const name =
-        type === 'node'
+        type === 'collection'
           ? nodes.find(({ id }) => id === entity)?.collection
           : links.find(
               ({ source, target: _target }) =>
                 source === entity && _target === target,
             )?.edge;
 
-      setState({ ...state, selected: { type, name } });
+      setState({
+        ...state,
+        modals: { ...state.modals, [type]: { name, open: true } },
+      });
     };
 
   /**
    *
    * @param {string} name
    */
-  const setDialogs = name =>
+  const setDialogs = (name) =>
     /**
      * @param {boolean} open
      */
-    open => {
+    (open) => {
       setState({ ...state, dialogs: { ...state.dialogs, [name]: open } });
+    };
+
+  /**
+   *
+   * @param {string} name name of the collection
+   */
+  const setModals = (name) =>
+    /**
+     * @param {boolean} open
+     */
+    (open) => {
+      setState({
+        ...state,
+        modals: { ...state.modals, [name]: { ...state.modals[name], open } },
+      });
     };
 
   return (
     <UIContext.Provider
-      value={{ ...state, setDialogs, setSelected, setBackdropOpen }}
+      value={{ ...state, setModals, setDialogs, setSelected, setBackdropOpen }}
     >
       {children}
     </UIContext.Provider>
