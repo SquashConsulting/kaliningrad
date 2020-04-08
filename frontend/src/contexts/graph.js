@@ -56,7 +56,8 @@ const initialState = {
   ],
 };
 
-const defaultState = localState ? JSON.parse(localState) : initialState;
+const _defaultState = localState ? JSON.parse(localState) : initialState;
+const defaultState = _defaultState.nodes.length ? _defaultState : initialState;
 
 export const GraphContext = createContext(defaultState);
 
@@ -138,7 +139,11 @@ const GraphContextProvider = ({ children }) => {
       ({ edge }) => ![oldEdges[edge]._from, oldEdges[edge]._to].includes(name),
     );
 
-    updateState({ edges, links, nodes, collections });
+    if (!nodes.length) {
+      updateState(initialState);
+    } else {
+      updateState({ edges, links, nodes, collections });
+    }
   };
 
   /**

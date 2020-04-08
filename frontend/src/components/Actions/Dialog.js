@@ -21,6 +21,11 @@ const Dialog = ({ title, open, handleClose, handler, message }) => (
       </DialogContentText>
     </DialogContent>
     <DialogActions>
+      {handler && (
+        <Button onClick={handleClose} color="primary" autoFocus>
+          Cancel
+        </Button>
+      )}
       <Button onClick={handler || handleClose} color="primary" autoFocus>
         Okay
       </Button>

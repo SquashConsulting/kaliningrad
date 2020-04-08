@@ -4,6 +4,8 @@ import { JsonEditor as Editor } from 'jsoneditor-react';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
+import Dialog from 'components/Actions/Dialog';
+
 import { UIContext } from 'contexts/ui';
 import { GraphContext } from 'contexts/graph';
 
@@ -25,12 +27,14 @@ export const Modal = () => {
 
   const {
     setCollection,
+    removeCollection,
     data: { collections },
   } = useContext(GraphContext);
 
+  const [json, setJson] = useState({});
   const [error, setError] = useState(false);
   const [showMsg, setShowMsg] = useState(false);
-  const [json, setJson] = useState({});
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -51,6 +55,10 @@ export const Modal = () => {
 
     setJson(typeToJson[type]);
   }, [open, type, name, collections]);
+
+  const handleDialog = (isOpen) => () => {
+    setDialogOpen(isOpen);
+  };
 
   const handleClick = () => {
     // refactor this validation to use JSON::Schema instead
@@ -100,8 +108,16 @@ export const Modal = () => {
         </span>,
       );
 
-    setCollection(name, json[name]);
+    const collectionName = type === 'edit' ? name : Object.keys(json)[0];
 
+    setCollection(collectionName, json[collectionName]);
+
+    setModals(TYPE)(false);
+  };
+
+  const handleRemove = () => {
+    removeCollection(name);
+    setDialogOpen(false);
     setModals(TYPE)(false);
   };
 
@@ -120,50 +136,69 @@ export const Modal = () => {
     );
 
   return (
-    <ModalCore name={TYPE} title={title}>
-      <>
-        <Editor
-          value={json}
-          navigationBar
-          onChange={setJson}
-          enableSort={false}
-          enableTransform={false}
-          allowedModes={['tree', 'code']}
-          onValidationError={handleError}
-          templates={[
-            {
-              text: 'Attribute',
-              field: 'fieldName',
-              title: 'Insert an Attribute Node',
-              className: 'jsoneditor-type-object',
-              value: {
-                type: 'string',
-                required: true,
+    <>
+      <Dialog
+        open={dialogOpen}
+        title="Are you sure?"
+        handler={handleRemove}
+        handleClose={handleDialog(false)}
+        message="If you remove this collection all the nodes ands links related to this collection will be removed."
+      />
+      <ModalCore name={TYPE} title={title}>
+        <>
+          <Editor
+            value={json}
+            navigationBar
+            onChange={setJson}
+            enableSort={false}
+            enableTransform={false}
+            allowedModes={['tree', 'code']}
+            onValidationError={handleError}
+            templates={[
+              {
+                text: 'Attribute',
+                field: 'fieldName',
+                title: 'Insert an Attribute Node',
+                className: 'jsoneditor-type-object',
+                value: {
+                  type: 'string',
+                  required: true,
+                },
               },
-            },
-          ]}
-        />
-        <div className={classes.contentButton}>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={handleClick}
-            className={classes.button}
-          >
-            {type}
-          </Button>
-        </div>
-        {showMsg && (
-          <Typography
-            component="div"
-            variant="body1"
-            color="textSecondary"
-            className={classes.error}
-          >
-            {showMsg}
-          </Typography>
-        )}
-      </>
-    </ModalCore>
+            ]}
+          />
+          <div className={classes.contentButton}>
+            {type === 'edit' && (
+              <Button
+                color="secondary"
+                variant="contained"
+                className={classes.button}
+                onClick={handleDialog(true)}
+              >
+                Remove
+              </Button>
+            )}
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={handleClick}
+              className={classes.button}
+            >
+              {type}
+            </Button>
+          </div>
+          {showMsg && (
+            <Typography
+              component="div"
+              variant="body1"
+              color="textSecondary"
+              className={classes.error}
+            >
+              {showMsg}
+            </Typography>
+          )}
+        </>
+      </ModalCore>
+    </>
   );
 };

@@ -29,6 +29,7 @@ export default makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     textTransform: 'capitalize',
+    marginRight: theme.spacing(2),
   },
   contentTitle: {
     display: 'flex',
