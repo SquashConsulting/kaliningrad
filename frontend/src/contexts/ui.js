@@ -14,6 +14,7 @@ const defaultState = {
       open: false,
     },
     collection: {
+      type: null,
       name: null,
       open: false,
     },
@@ -22,7 +23,6 @@ const defaultState = {
     node: false,
     link: false,
     save: false,
-    collection: false,
   },
 };
 
@@ -63,7 +63,10 @@ const UIContextProvider = ({ children }) => {
 
       setState({
         ...state,
-        modals: { ...state.modals, [type]: { name, open: true } },
+        modals: {
+          ...state.modals,
+          [type]: { name, open: true, type: 'edit' },
+        },
       });
     };
 
@@ -86,11 +89,15 @@ const UIContextProvider = ({ children }) => {
   const setModals = (name) =>
     /**
      * @param {boolean} open
+     * @param {{type: string}} rest
      */
-    (open) => {
+    (open, rest = {}) => {
       setState({
         ...state,
-        modals: { ...state.modals, [name]: { ...state.modals[name], open } },
+        modals: {
+          ...state.modals,
+          [name]: { ...state.modals[name], open, ...rest },
+        },
       });
     };
 

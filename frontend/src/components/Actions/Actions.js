@@ -26,7 +26,7 @@ const Actions = () => {
   const [confirm, setConfirm] = useState(false);
 
   const { loadGraph, resetGraph } = useContext(GraphContext);
-  const { setBackdropOpen, setDialogs } = useContext(UIContext);
+  const { setBackdropOpen, setDialogs, setModals } = useContext(UIContext);
 
   const actions = [
     {
@@ -103,12 +103,13 @@ const Actions = () => {
   };
 
   const typeToAction = {
-    upload: () => fileUploader.current.click(),
     reset: () => setConfirm(true),
+    upload: () => fileUploader.current.click(),
+    collection: () => setModals('collection')(true, { type: 'create' }),
   };
 
-  const handler = type => () => {
-    if (Object.keys(typeToAction).includes(type)) return typeToAction[type]();
+  const handler = (type) => () => {
+    if (typeToAction[type]) return typeToAction[type]();
 
     setDialogs(type)(true);
   };
@@ -145,7 +146,7 @@ const Actions = () => {
         className={classes.speedDial}
         ariaLabel="Open Actions Dial"
       >
-        {actions.map(action => (
+        {actions.map((action) => (
           <SpeedDialAction
             tooltipOpen
             key={action.name}

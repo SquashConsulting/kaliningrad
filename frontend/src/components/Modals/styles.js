@@ -28,6 +28,7 @@ export default makeStyles((theme) => ({
   button: {
     display: 'flex',
     alignItems: 'center',
+    textTransform: 'capitalize',
   },
   contentTitle: {
     display: 'flex',
@@ -38,5 +39,9 @@ export default makeStyles((theme) => ({
     display: 'flex',
     marginTop: theme.spacing(4),
     flexDirection: 'row-reverse',
+  },
+  error: {
+    width: '70%',
+    marginTop: theme.spacing(2),
   },
 }));

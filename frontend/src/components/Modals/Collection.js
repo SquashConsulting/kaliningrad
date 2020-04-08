@@ -19,7 +19,7 @@ export const Modal = () => {
   const {
     setModals,
     modals: {
-      [TYPE]: { name },
+      [TYPE]: { open, name, type },
     },
   } = useContext(UIContext);
 
@@ -30,15 +30,29 @@ export const Modal = () => {
 
   const [error, setError] = useState(false);
   const [showMsg, setShowMsg] = useState(false);
-  const [json, setJson] = useState({ [name]: collections[name] });
+  const [json, setJson] = useState({});
 
   useEffect(() => {
-    if (name) {
-      setJson({ [name]: collections[name] });
-    }
-  }, [name, collections]);
+    if (!open) return;
 
-  const handleEdit = () => {
+    const typeToJson = {
+      edit: {
+        [name]: collections[name],
+      },
+      create: {
+        collectionName: {
+          field: {
+            type: 'string',
+            required: true,
+          },
+        },
+      },
+    };
+
+    setJson(typeToJson[type]);
+  }, [open, type, name, collections]);
+
+  const handleClick = () => {
     // refactor this validation to use JSON::Schema instead
     if (error) return setShowMsg('Please fix your JSON to continue');
 
@@ -52,9 +66,14 @@ export const Modal = () => {
         </span>,
       );
 
-    if (!collections[Object.keys(json)[0]])
+    if (type === 'edit' && !collections[Object.keys(json)[0]])
       return setShowMsg(
         'You cannot modify the collection name, please instead create a new collection',
+      );
+
+    if (type === 'create' && collections[Object.keys(json)[0]])
+      return setShowMsg(
+        'Collection already exists, consider editing that collection by clicking on one of its nodes',
       );
 
     if (
@@ -91,11 +110,14 @@ export const Modal = () => {
     setError(!!errors.length);
   };
 
-  const title = (
-    <span>
-      Editing collection <code>"{name}"</code>
-    </span>
-  );
+  const title =
+    type === 'edit' ? (
+      <span>
+        Editing collection <code>"{name}"</code>
+      </span>
+    ) : (
+      <span>Create collection</span>
+    );
 
   return (
     <ModalCore name={TYPE} title={title}>
@@ -122,8 +144,13 @@ export const Modal = () => {
           ]}
         />
         <div className={classes.contentButton}>
-          <Button variant="contained" color="primary" onClick={handleEdit}>
-            Edit
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={handleClick}
+            className={classes.button}
+          >
+            {type}
           </Button>
         </div>
         {showMsg && (
