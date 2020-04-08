@@ -1,6 +1,7 @@
 import React, { useState, createContext } from 'react';
 
-import arrayEqual from 'utils/arrayEqual';
+import validate from 'kaliningrad-validator';
+
 import filterObject from 'utils/filterObject';
 
 /**
@@ -66,7 +67,7 @@ const GraphContextProvider = ({ children }) => {
   // Graph Actions //
   //***************//
 
-  const updateState = newState => {
+  const updateState = (newState) => {
     setData(newState);
     window.localStorage.setItem('kalinigrad_state', JSON.stringify(newState));
   };
@@ -82,35 +83,15 @@ const GraphContextProvider = ({ children }) => {
    *
    * @param {string} contents
    */
-  const loadGraph = contents => {
+  const loadGraph = (contents) => {
     const graph = JSON.parse(contents);
     const error = new Error(
       'Invalid file format, please use a valid Kalinigrad graph',
     );
 
-    if (!arrayEqual(Object.keys(defaultState), Object.keys(graph))) throw error;
+    const isValid = validate(graph);
 
-    if (
-      !Object.values(graph.collections).every(collection =>
-        Object.values(collection).every(
-          field =>
-            Object.keys(field).length === 2 &&
-            ['string', 'number', 'boolean'].includes(field.type) &&
-            typeof field.required === typeof true,
-        ),
-      )
-    )
-      throw error;
-
-    if (
-      !Object.values(graph.edges).every(
-        edge =>
-          Object.keys(edge).length === 2 &&
-          typeof edge._from === 'string' &&
-          typeof edge._to === 'string',
-      )
-    )
-      throw error;
+    if (!isValid) throw error;
 
     updateState(graph);
   };
@@ -129,8 +110,8 @@ const GraphContextProvider = ({ children }) => {
   const setCollection = (name, attributes) => {
     updateState({
       ...data,
-      __meta__: { ...data.__meta__, [name]: 0 },
       collections: { ...data.collections, [name]: attributes },
+      __meta__: { ...data.__meta__, [name]: data.__meta__[name] || 0 },
     });
   };
 
@@ -138,7 +119,7 @@ const GraphContextProvider = ({ children }) => {
    * Removes collection and all related nodes/links
    * @param {string} name
    */
-  const removeCollection = name => {
+  const removeCollection = (name) => {
     const {
       edges: oldEdges,
       links: oldLinks,
@@ -149,10 +130,10 @@ const GraphContextProvider = ({ children }) => {
 
     const edges = filterObject(
       oldEdges,
-      edge => ![edge._from, edge._to].includes(name),
+      (edge) => ![edge._from, edge._to].includes(name),
     );
 
-    const nodes = oldNodes.filter(node => node.collection !== name);
+    const nodes = oldNodes.filter((node) => node.collection !== name);
     const links = oldLinks.filter(
       ({ edge }) => ![oldEdges[edge]._from, oldEdges[edge]._to].includes(name),
     );
@@ -180,7 +161,7 @@ const GraphContextProvider = ({ children }) => {
    *
    * @param {string} name name of the edge
    */
-  const removeEdge = name => {
+  const removeEdge = (name) => {
     setEdge(name, null);
   };
 
@@ -193,7 +174,7 @@ const GraphContextProvider = ({ children }) => {
    *
    * @param {Node} node
    */
-  const addNode = node => {
+  const addNode = (node) => {
     updateState({
       ...data,
       nodes: [...data.nodes, node],
@@ -220,8 +201,8 @@ const GraphContextProvider = ({ children }) => {
    *
    * @param {Node} node
    */
-  const removeNode = node => {
-    const newNodes = data.nodes.filter(_node => _node.id !== node.id);
+  const removeNode = (node) => {
+    const newNodes = data.nodes.filter((_node) => _node.id !== node.id);
     updateState({ ...data, nodes: newNodes });
   };
 
@@ -230,7 +211,7 @@ const GraphContextProvider = ({ children }) => {
    *
    * @param {Edge} link
    */
-  const addLink = link => {
+  const addLink = (link) => {
     updateState({
       ...data,
       links: [...data.links, link],
@@ -242,7 +223,7 @@ const GraphContextProvider = ({ children }) => {
    *
    * @param {Edge} edge
    */
-  const removeLink = link => {
+  const removeLink = (link) => {
     const { edge: _edge, source: _source, target: _target } = link;
     const newLinks = data.links.filter(
       ({ edge, source, target }) =>

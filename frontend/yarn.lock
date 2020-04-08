@@ -6589,6 +6589,12 @@ jsx-ast-utils@^2.2.1, jsx-ast-utils@^2.2.3:
     array-includes "^3.0.3"
     object.assign "^4.1.0"
 
+kaliningrad-validator@SquashConsulting/kaliningrad-validator#master:
+  version "1.0.0"
+  resolved "https://codeload.github.com/SquashConsulting/kaliningrad-validator/tar.gz/acd9c83004af5faa3dc01042e88b9706fa4b3d91"
+  dependencies:
+    ajv "^6.12.0"
+
 killable@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/killable/-/killable-1.0.1.tgz#4c8ce441187a061c7474fb87ca08e2a638194892"

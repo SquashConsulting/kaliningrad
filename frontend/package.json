@@ -13,6 +13,7 @@
     "file-saver": "^2.0.2",
     "jsoneditor": "^8.6.4",
     "jsoneditor-react": "^3.0.0",
+    "kaliningrad-validator": "SquashConsulting/kaliningrad-validator#master",
     "react": "^16.13.0",
     "react-d3-graph": "^2.4.1",
     "react-dom": "^16.13.0",
