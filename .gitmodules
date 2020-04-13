@@ -1,3 +1,7 @@
 [submodule "validator"]
 	path = validator
 	url = git@github.com:SquashConsulting/kaliningrad-validator.git
+[submodule "foxx_typescript"]
+	path = foxx_typescript
+	url = git@github.com:SquashConsulting/foxx_typescript.git
+	branch = next
