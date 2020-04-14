@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo '#!/usr/bin/env node' > temp.js
+cat dist/entry.js >> temp.js
+mv temp.js dist/entry.js

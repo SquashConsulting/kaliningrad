@@ -1,13 +1,17 @@
 {
-  "name": "generator",
-  "version": "0.0.0",
+  "name": "kaliningrad",
+  "version": "0.1.0",
   "description": "Kaliningrad project generator",
   "main": "dist/entry.js",
   "private": true,
   "scripts": {
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "postbuild": "ef-tspm && ./bin/prepend_shebang"
   },
+  "bin": "./dist/entry.js",
   "devDependencies": {
+    "@ef-carbon/tspm": "^2.2.5",
+    "@types/execa": "^2.0.0",
     "@types/lodash.omit": "^4.5.6",
     "@types/node": "^13.5.0",
     "@types/yargs": "^15.0.4",
@@ -15,6 +19,7 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
+    "execa": "^4.0.0",
     "gitly": "^1.1.5",
     "kaliningrad-validator": "github:SquashConsulting/kaliningrad-validator#master",
     "lodash.omit": "^4.5.0",
