@@ -12,7 +12,7 @@ Commands:
 
 Options:
   --version     Show version number                                    [boolean]
-  --config, -c  Loads a Kaliningrad configuration file                         [required]
+  --config, -c  Loads a Kaliningrad configuration file                 [required]
   -h, --help    Show help                                              [boolean]
 
 Examples:
