@@ -1,12 +1,12 @@
-#!/usr/bin/env node
 import yargs from 'yargs';
 
+import { IConfig } from 'interfaces';
+
+import generateProject from 'runner';
 import check from 'utils/argumentValidator';
 import processFile from 'utils/fileProcessor';
 
-import prepareTemplate from 'services/git';
-
-const argv = yargs
+const argv: yargs.Arguments<IConfig> = yargs
   .scriptName('kaliningrad')
   .usage('Usage: $0 <command> [options]')
   .command('generate', 'generates a project with given configuration')
@@ -25,7 +25,4 @@ const argv = yargs
   .alias('h', 'help')
   .epilog('copyright 2020 @ Squash Consulting').argv;
 
-// const graph: Kaliningrad.Graph = argv.config;
-const destination: string = argv._[argv._.length - 1];
-
-prepareTemplate(destination);
+generateProject(argv);

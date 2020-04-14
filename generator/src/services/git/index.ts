@@ -1,11 +1,11 @@
 import { fetch, extract } from 'gitly';
 
-const URL = 'SquashConsulting/foxx_typescript#next';
+import { TEMPLATE_URL as URL } from 'utils/constants';
 
-export default async function(destination: string): Promise<void> {
+export default async function (destination: string): Promise<void> {
   console.log('fetching', URL);
   const source: string = await fetch(URL);
 
   console.log('extracting to', destination);
-  extract(source, destination);
+  await extract(source, destination);
 }
