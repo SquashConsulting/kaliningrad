@@ -9,13 +9,21 @@ import Dialog from 'components/Actions/Dialog';
 import { UIContext } from 'contexts/ui';
 import { GraphContext } from 'contexts/graph';
 
+import { UI } from './data';
 import useStyles from './styles';
 import ModalCore from './_Modal';
+import validateJson from './utils/useValidation';
+
 import 'jsoneditor-react/es/editor.min.css';
 
+/* Exports */
+
+export default Modal;
 export const TYPE = 'collection';
 
-export const Modal = () => {
+/* Module Functions */
+
+function Modal() {
   const classes = useStyles();
 
   const {
@@ -33,8 +41,8 @@ export const Modal = () => {
 
   const [json, setJson] = useState({});
   const [error, setError] = useState(false);
-  const [showMsg, setShowMsg] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -56,62 +64,18 @@ export const Modal = () => {
     setJson(typeToJson[type]);
   }, [open, type, name, collections]);
 
-  const handleDialog = (isOpen) => () => {
+  const setDialogStatus = (isOpen) => () => {
     setDialogOpen(isOpen);
   };
 
-  const handleClick = () => {
-    // refactor this validation to use JSON::Schema instead
-    if (error) return setShowMsg('Please fix your JSON to continue');
+  const updateCollection = () => {
+    const message = validateJson(json, collections, type, error);
 
-    if (Object.keys(json).length !== 1)
-      return setShowMsg(
-        <span>
-          Your schema must have only one root-level field
-          <ul>
-            <li>the collection name</li>
-          </ul>
-        </span>,
-      );
-
-    if (type === 'edit' && !collections[Object.keys(json)[0]])
-      return setShowMsg(
-        'You cannot modify the collection name, please instead create a new collection',
-      );
-
-    if (type === 'create' && collections[Object.keys(json)[0]])
-      return setShowMsg(
-        'Collection already exists, consider editing that collection by clicking on one of its nodes',
-      );
-
-    if (
-      Object.values(Object.values(json)[0]).some(
-        (field) =>
-          !(
-            Object.keys(field).length === 2 &&
-            ['string', 'number', 'boolean'].includes(field.type) &&
-            typeof field.required === typeof true
-          ),
-      )
-    )
-      return setShowMsg(
-        <span>
-          Your collection fields must have only these fields:
-          <ul>
-            <li>
-              <code>type: "string" | "number" | "boolean"</code>
-            </li>
-            <li>
-              <code>required: boolean</code>
-            </li>
-          </ul>
-        </span>,
-      );
+    if (message) return setErrorMessage(message);
 
     const collectionName = type === 'edit' ? name : Object.keys(json)[0];
 
     setCollection(collectionName, json[collectionName]);
-
     setModals(TYPE)(false);
   };
 
@@ -122,29 +86,22 @@ export const Modal = () => {
   };
 
   const handleError = (errors) => {
-    if (!errors.length) setShowMsg(false);
+    if (!errors.length) setErrorMessage(null);
     setError(!!errors.length);
   };
 
-  const title =
-    type === 'edit' ? (
-      <span>
-        Editing collection <code>"{name}"</code>
-      </span>
-    ) : (
-      <span>Create collection</span>
-    );
+  const Title = UI.Modal.title[type]();
 
   return (
     <>
       <Dialog
         open={dialogOpen}
-        title="Are you sure?"
         handler={handleRemove}
-        handleClose={handleDialog(false)}
-        message="If you remove this collection all the nodes ands links related to this collection will be removed."
+        title={UI.Dialog.title}
+        message={UI.Dialog.message}
+        handleClose={setDialogStatus(false)}
       />
-      <ModalCore name={TYPE} title={title}>
+      <ModalCore name={TYPE} title={Title}>
         <>
           <Editor
             value={json}
@@ -154,18 +111,7 @@ export const Modal = () => {
             enableTransform={false}
             allowedModes={['tree', 'code']}
             onValidationError={handleError}
-            templates={[
-              {
-                text: 'Attribute',
-                field: 'fieldName',
-                title: 'Insert an Attribute Node',
-                className: 'jsoneditor-type-object',
-                value: {
-                  type: 'string',
-                  required: true,
-                },
-              },
-            ]}
+            templates={UI.configs.templates}
           />
           <div className={classes.contentButton}>
             {type === 'edit' && (
@@ -173,7 +119,7 @@ export const Modal = () => {
                 color="secondary"
                 variant="contained"
                 className={classes.button}
-                onClick={handleDialog(true)}
+                onClick={setDialogStatus(true)}
               >
                 Remove
               </Button>
@@ -181,24 +127,24 @@ export const Modal = () => {
             <Button
               color="primary"
               variant="contained"
-              onClick={handleClick}
+              onClick={updateCollection}
               className={classes.button}
             >
               {type}
             </Button>
           </div>
-          {showMsg && (
+          {errorMessage && (
             <Typography
               component="div"
               variant="body1"
               color="textSecondary"
               className={classes.error}
             >
-              {showMsg}
+              {errorMessage}
             </Typography>
           )}
         </>
       </ModalCore>
     </>
   );
-};
+}

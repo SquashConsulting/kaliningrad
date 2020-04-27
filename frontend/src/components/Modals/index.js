@@ -2,9 +2,18 @@ import React from 'react';
 
 import * as Collection from './Collection';
 
-const all = [Collection];
+/* Constants */
 
-const Modals = () =>
-  all.map((Component) => <Component.Modal key={`modals-${Component.TYPE}`} />);
+const ALL = [Collection];
+
+/* Exports */
 
 export default Modals;
+
+/* Module Functions */
+
+function Modals() {
+  return ALL.map((Component) => (
+    <Component.default key={`modals-${Component.TYPE}`} />
+  ));
+}

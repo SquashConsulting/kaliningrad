@@ -6,7 +6,13 @@ import Typography from '@material-ui/core/Typography';
 
 import useStyles from './styles';
 
-const ModalContentWrapper = ({ title, onClose, children }) => {
+/* Exports */
+
+export default ModalContentWrapper;
+
+/* Module Functions */
+
+function ModalContentWrapper({ title, onClose, children }) {
   const classes = useStyles();
 
   return (
@@ -20,6 +26,4 @@ const ModalContentWrapper = ({ title, onClose, children }) => {
       <div className={classes.content}>{children}</div>
     </div>
   );
-};
-
-export default ModalContentWrapper;
+}
