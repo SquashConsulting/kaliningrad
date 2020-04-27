@@ -6,6 +6,8 @@ import { GraphContext } from 'contexts/graph';
  * @typedef {{ source: string, target: string }} Link
  */
 
+/* Constants */
+
 const defaultState = {
   backdropOpen: false,
   modals: {
@@ -14,9 +16,9 @@ const defaultState = {
       open: false,
     },
     collection: {
-      type: null,
       name: null,
       open: false,
+      type: 'create',
     },
   },
   dialogs: {
@@ -26,9 +28,14 @@ const defaultState = {
   },
 };
 
+/* Exports */
+
+export default UIContextProvider;
 export const UIContext = createContext(defaultState);
 
-const UIContextProvider = ({ children }) => {
+/* Module Functions */
+
+function UIContextProvider({ children }) {
   const [state, setState] = useState(defaultState);
 
   const {
@@ -108,6 +115,4 @@ const UIContextProvider = ({ children }) => {
       {children}
     </UIContext.Provider>
   );
-};
-
-export default UIContextProvider;
+}
