@@ -2,7 +2,7 @@ import { ERRORS } from 'components/Modals/data';
 
 /* Exports */
 
-export default validateJson;
+export { validateJson };
 
 /* Module Functions */
 

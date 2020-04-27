@@ -12,7 +12,7 @@ import { GraphContext } from 'contexts/graph';
 import { UI } from './data';
 import useStyles from './styles';
 import ModalCore from './_Modal';
-import validateJson from './utils/useValidation';
+import { validateJson } from './utils/validators';
 
 import 'jsoneditor-react/es/editor.min.css';
 
