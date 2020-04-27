@@ -3,30 +3,38 @@ import path from 'path';
 import omit from 'lodash.omit';
 import validate from 'kaliningrad-validator';
 
+/* Constants */
+
 const KEYS_TO_OMIT = ['__meta__', 'links', 'nodes'];
 const ERROR = new Error(
   'Invalid file format, please use a valid Kaliningrad graph',
 );
 
-type OptionsResult = [Error | null, Kaliningrad.Graph | null];
+/* EXPORTS */
 
-export function validateJSON(json: Kaliningrad.GraphConfig): OptionsResult {
+export default processFile;
+
+/* Module Functions */
+
+function validateJSON(json: Kaliningrad.GraphConfig): Kaliningrad.Graph {
   const isValid = validate(json);
 
-  if (!isValid) return [ERROR, null];
+  if (!isValid) throw ERROR;
 
   const kalliningraph: Kaliningrad.Graph = omit<Kaliningrad.GraphConfig>(
     json,
     KEYS_TO_OMIT,
   );
 
-  return [null, kalliningraph];
+  return kalliningraph;
 }
 
-export function processOptions(initialPath: any): OptionsResult {
+function processOptions(initialPath: any): Kaliningrad.Graph {
   const filePath = initialPath as string;
 
-  if (path.extname(filePath) !== '.json') return [ERROR, null];
+  if (path.extname(filePath) !== '.json') {
+    throw ERROR;
+  }
 
   const file = fs.readFileSync(filePath, 'utf-8');
   const graph = JSON.parse(file);
@@ -34,10 +42,8 @@ export function processOptions(initialPath: any): OptionsResult {
   return validateJSON(graph);
 }
 
-export default function (initialPath: any): Kaliningrad.Graph {
-  const [error, graph] = processOptions(initialPath);
-
-  if (error) throw error;
+function processFile(initialPath: any): Kaliningrad.Graph {
+  const graph: Kaliningrad.Graph = processOptions(initialPath);
 
   return graph;
 }

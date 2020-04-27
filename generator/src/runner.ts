@@ -7,7 +7,13 @@ import { IConfig } from 'interfaces';
 import clone from 'services/git';
 import bootstrap from 'services/templates';
 
-const generateProjectPath = (projectName: string): string => {
+/* Exports */
+
+export default generateProject;
+
+/* Module Functions */
+
+function generateProjectPath(projectName: string): string {
   const cwd = process.cwd();
   const projectPath = path.join(cwd, projectName);
 
@@ -18,9 +24,9 @@ const generateProjectPath = (projectName: string): string => {
   if (!isDirectory) return projectPath;
 
   throw new Error(`A directory with the name "${projectName}" already exists.`);
-};
+}
 
-export default async (argv: yargs.Arguments<IConfig>): Promise<void> => {
+async function generateProject(argv: yargs.Arguments<IConfig>): Promise<void> {
   const graph: Kaliningrad.Graph = argv.config;
   const projectName = argv._[argv._.length - 1];
 
@@ -28,4 +34,4 @@ export default async (argv: yargs.Arguments<IConfig>): Promise<void> => {
 
   await clone(destination);
   bootstrap(destination, graph);
-};
+}

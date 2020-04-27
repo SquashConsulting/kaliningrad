@@ -2,10 +2,16 @@ import { fetch, extract } from 'gitly';
 
 import { TEMPLATE_URL as URL } from 'utils/constants';
 
-export default async function (destination: string): Promise<void> {
-  console.log('fetching', URL);
+/* Exports */
+
+export default clone;
+
+/* Module Functions */
+
+async function clone(destination: string): Promise<string> {
+  console.info('fetching', URL);
   const source: string = await fetch(URL);
 
-  console.log('extracting to', destination);
-  await extract(source, destination);
+  console.info('extracting to', destination);
+  return extract(source, destination);
 }

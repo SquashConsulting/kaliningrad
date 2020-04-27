@@ -1,6 +1,12 @@
 import yargs from 'yargs';
 
-export default function(argv: yargs.Arguments): boolean {
+/* Exports */
+
+export default processArguments;
+
+/* Module Functions */
+
+function processArguments(argv: yargs.Arguments): boolean {
   const length: number = argv._.length;
   if (length !== 2)
     throw new Error(
