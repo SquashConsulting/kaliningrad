@@ -4,11 +4,18 @@ import * as Link from './Link';
 import * as Save from './Save';
 import * as Node from './Node';
 
-const all = [Link, Save, Node];
+/* Constants */
 
-const Dialogs = () =>
-  all.map((Component) => (
-    <Component.Dialog key={`dialogs-${Component.TYPE}`} />
-  ));
+const ALL = [Link, Save, Node];
+
+/* Exports */
 
 export default Dialogs;
+
+/* Module functions */
+
+function Dialogs() {
+  return ALL.map((Component) => (
+    <Component.default key={`dialogs-${Component.TYPE}`} />
+  ));
+}

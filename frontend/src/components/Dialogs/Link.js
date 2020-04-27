@@ -12,14 +12,21 @@ import DialogContent from '@material-ui/core/DialogContent';
 import { UIContext } from 'contexts/ui';
 import { GraphContext } from 'contexts/graph';
 
+import { UI } from './data';
 import useStyles from './styles';
 import DialogCore from './_Dialog';
+import { getValidNodes, validateLink } from './utils/validators';
 
+/* Constants */
+
+const DEFAULT_STATE = { edge: '', _from: '', _to: '' };
+
+/* Exports */
+
+export default Dialog;
 export const TYPE = 'link';
 
-const defaultState = { edge: '', _from: '', _to: '' };
-
-export const Dialog = () => {
+function Dialog() {
   const classes = useStyles();
 
   const {
@@ -34,49 +41,42 @@ export const Dialog = () => {
   } = useContext(UIContext);
 
   const [error, setError] = useState(null);
-  const [state, setState] = useState(defaultState);
+  const [state, setState] = useState(DEFAULT_STATE);
   const [validNodes, setValidNodes] = useState(nodes);
 
   useEffect(() => {
     if (!open) {
       setError(null);
-      setState(defaultState);
+      setState(DEFAULT_STATE);
     }
   }, [open]);
 
   useEffect(() => {
     if (state._from) {
-      setValidNodes(
-        nodes.filter(
-          node =>
-            node.id !== state._from &&
-            (edges[state.edge]
-              ? node.collection === edges[state.edge]._to
-              : true) &&
-            !links.find(
-              ({ source, target }) =>
-                target === node.id && source === state._from,
-            ),
-        ),
+      const _validNodes = getValidNodes(
+        nodes,
+        edges,
+        links,
+        state.edge,
+        state._from,
       );
+
+      setValidNodes(_validNodes);
     }
   }, [state._from, state.edge, edges, nodes, links]);
 
-  const handleCreate = () => {
+  const createLink = () => {
     setError(null);
 
     const { edge, _from, _to } = state;
     const edgeName = edge.trim();
 
-    if (Object.values(state).some(value => !value))
-      return setError('All the fields are required');
-
-    if (edgeName.split(' ').length > 1)
-      return setError('Edge names must not have any whitespace');
+    const errorMessage = validateLink(state, edgeName);
+    if (errorMessage) setError(errorMessage);
 
     if (!edges[edgeName]) {
-      const fromCollection = nodes.find(node => node.id === _from).collection;
-      const toCollection = nodes.find(node => node.id === _to).collection;
+      const fromCollection = nodes.find((node) => node.id === _from).collection;
+      const toCollection = nodes.find((node) => node.id === _to).collection;
 
       setEdge(
         edgeName,
@@ -90,23 +90,21 @@ export const Dialog = () => {
     setDialogs(TYPE)(false);
   };
 
-  const handleChange = type => ({ target: { value } }) => {
+  const updateState = (type) => ({ target: { value } }) => {
     setState({ ...state, [type]: value || '' });
   };
 
-  const renderOptions = type => {
+  const renderOptions = (type) => {
     const acceptedNodes = type === '_from' ? nodes : validNodes;
 
     if (!acceptedNodes.length)
       return (
         <MenuItem key={`${type}-no-result`} value="" disabled>
-          No valid node was found,{' '}
-          {type === '_to' && 'consider changing the `_from` node, or '}
-          try creating a new one.
+          {UI.Link.emptyOptions[type]}
         </MenuItem>
       );
 
-    return acceptedNodes.map(node => (
+    return acceptedNodes.map((node) => (
       <MenuItem key={node.id} value={node.id}>
         {node.label}
       </MenuItem>
@@ -116,8 +114,8 @@ export const Dialog = () => {
   return (
     <DialogCore
       name={TYPE}
-      title="Create a link"
-      action={{ handler: handleCreate, label: 'Create' }}
+      title={UI.Dialog.Link.title}
+      action={{ handler: createLink, label: UI.Dialog.Link.actionLabel }}
     >
       <DialogContent>
         <form className={classes.container}>
@@ -131,7 +129,7 @@ export const Dialog = () => {
                 input={<Input />}
                 value={state._from}
                 labelId="_from-label"
-                onChange={handleChange('_from')}
+                onChange={updateState('_from')}
               >
                 {renderOptions('_from')}
               </Select>
@@ -144,7 +142,7 @@ export const Dialog = () => {
                 margin="dense"
                 label="Edge Name"
                 value={state.edge}
-                onChange={handleChange('edge')}
+                onChange={updateState('edge')}
               />
             </FormControl>
             <FormControl className={classes.formControl}>
@@ -155,7 +153,7 @@ export const Dialog = () => {
                 input={<Input />}
                 value={state._to}
                 labelId="_to-label"
-                onChange={handleChange('_to')}
+                onChange={updateState('_to')}
               >
                 {renderOptions('_to')}
               </Select>
@@ -170,4 +168,4 @@ export const Dialog = () => {
       </DialogContent>
     </DialogCore>
   );
-};
+}
