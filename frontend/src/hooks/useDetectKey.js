@@ -1,6 +1,11 @@
 import { useEffect } from 'react';
 
-export default function useDetectKey(onPress) {
+/* Exports */
+export default useDetectKey;
+
+/* Module Functions */
+
+function useDetectKey(onPress) {
   useEffect(() => {
     document.addEventListener('keydown', onPress, false);
 
