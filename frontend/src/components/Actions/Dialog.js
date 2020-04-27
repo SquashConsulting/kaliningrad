@@ -7,30 +7,36 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 
-const Dialog = ({ title, open, handleClose, handler, message }) => (
-  <DialogCore
-    open={open}
-    onClose={handleClose}
-    aria-labelledby="alert-dialog-title"
-    aria-describedby="alert-dialog-description"
-  >
-    <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
-    <DialogContent>
-      <DialogContentText id="alert-dialog-description">
-        {message}
-      </DialogContentText>
-    </DialogContent>
-    <DialogActions>
-      {handler && (
-        <Button onClick={handleClose} color="primary" autoFocus>
-          Cancel
-        </Button>
-      )}
-      <Button onClick={handler || handleClose} color="primary" autoFocus>
-        Okay
-      </Button>
-    </DialogActions>
-  </DialogCore>
-);
+/* Exports */
 
 export default Dialog;
+
+/* Module Functions */
+
+function Dialog({ title, open, handleClose, handler, message }) {
+  return (
+    <DialogCore
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          {message}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        {handler && (
+          <Button onClick={handleClose} color="primary" autoFocus>
+            Cancel
+          </Button>
+        )}
+        <Button onClick={handler || handleClose} color="primary" autoFocus>
+          Okay
+        </Button>
+      </DialogActions>
+    </DialogCore>
+  );
+}
