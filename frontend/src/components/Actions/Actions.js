@@ -4,20 +4,20 @@ import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 
-import SaveIcon from '@material-ui/icons/Save';
-import LoadIcon from '@material-ui/icons/Publish';
-import ResetIcon from '@material-ui/icons/Restore';
-import NodeIcon from '@material-ui/icons/AddCircle';
-import CollectionIcon from '@material-ui/icons/Share';
-import LinkIcon from '@material-ui/icons/PlayForWork';
-
 import { UIContext } from 'contexts/ui';
 import { GraphContext } from 'contexts/graph';
 
 import Dialog from './Dialog';
 import useStyles from './styles';
+import { UI, ACTIONS } from './data';
 
-const Actions = () => {
+/* Exports */
+
+export default Actions;
+
+/* Module Functions */
+
+function Actions() {
   const classes = useStyles();
 
   const fileUploader = useRef(null);
@@ -28,46 +28,13 @@ const Actions = () => {
   const { loadGraph, resetGraph } = useContext(GraphContext);
   const { setBackdropOpen, setDialogs, setModals } = useContext(UIContext);
 
-  const actions = [
-    {
-      type: 'save',
-      icon: <SaveIcon />,
-      name: 'Save The Graph',
-    },
-    {
-      type: 'upload',
-      icon: <LoadIcon />,
-      name: 'Load Graph',
-    },
-    {
-      type: 'reset',
-      icon: <ResetIcon />,
-      name: 'Reset Graph',
-    },
-    {
-      type: 'collection',
-      icon: <CollectionIcon />,
-      name: 'Create A Collection',
-    },
-    {
-      type: 'node',
-      icon: <NodeIcon />,
-      name: 'Create A Node',
-    },
-    {
-      type: 'link',
-      name: 'Create A Link',
-      icon: <LinkIcon className={classes.icon} />,
-    },
-  ];
-
   const handleUpload = async ({ target: { files } }) => {
     try {
       setBackdropOpen(true);
       const file = files[0];
 
       if (file.type !== 'application/json')
-        throw new Error('Invalid file format, please upload a .json file');
+        throw new Error(UI.ERRORS.invalidFormat);
 
       const content = await file.text();
 
@@ -89,17 +56,17 @@ const Actions = () => {
     setBackdropOpen(false);
   };
 
-  const handleErrorClose = () => {
+  const closeErrorDialog = () => {
     setError(false);
   };
 
-  const handleConfirmClose = () => {
+  const closeConfirmationDialog = () => {
     setConfirm(false);
   };
 
   const handleReset = () => {
     resetGraph();
-    handleConfirmClose();
+    closeConfirmationDialog();
   };
 
   const typeToAction = {
@@ -118,17 +85,17 @@ const Actions = () => {
     <div className={classes.root}>
       <Dialog
         open={confirm}
-        title="Are you sure?"
         handler={handleReset}
-        handleClose={handleConfirmClose}
-        message="If you click okay your current state will be erased."
+        title={UI.Dialog.title}
+        message={UI.Dialog.message}
+        handleClose={closeConfirmationDialog}
       />
       {error && (
         <Dialog
           title="Whoops!"
           open={!!error}
           message={error}
-          handleClose={handleErrorClose}
+          handleClose={closeErrorDialog}
         />
       )}
       <input
@@ -146,19 +113,17 @@ const Actions = () => {
         className={classes.speedDial}
         ariaLabel="Open Actions Dial"
       >
-        {actions.map((action) => (
+        {ACTIONS.map((Action) => (
           <SpeedDialAction
             tooltipOpen
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            onClick={handler(action.type)}
+            key={Action.name}
+            icon={<Action.Icon />}
+            tooltipTitle={Action.name}
+            onClick={handler(Action.type)}
             classes={{ staticTooltipLabel: classes.tooltip }}
           />
         ))}
       </SpeedDial>
     </div>
   );
-};
-
-export default Actions;
+}

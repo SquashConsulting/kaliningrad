@@ -11,7 +11,13 @@ import { UIContext } from 'contexts/ui';
 
 import useStyles from './styles';
 
-const Home = () => {
+/* Exports */
+
+export default Home;
+
+/* Module Functions */
+
+function Home() {
   const classes = useStyles();
   const { backdropOpen } = useContext(UIContext);
 
@@ -24,6 +30,4 @@ const Home = () => {
       <Dialogs />
     </div>
   );
-};
-
-export default Home;
+}

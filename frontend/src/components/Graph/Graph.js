@@ -6,7 +6,13 @@ import { GraphContext } from 'contexts/graph';
 
 import config from './config';
 
-const Graph = () => {
+/* Exports */
+
+export default Graph;
+
+/* Module Functions */
+
+function Graph() {
   const { data } = useContext(GraphContext);
   const { setSelected } = useContext(UIContext);
 
@@ -21,6 +27,4 @@ const Graph = () => {
       }}
     />
   );
-};
-
-export default Graph;
+}

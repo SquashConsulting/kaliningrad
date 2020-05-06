@@ -2,7 +2,7 @@ export default {
   maxZoom: 3,
   minZoom: 1,
   directed: true,
-  panAndZoom: true,
+  panAndZoom: false,
   staticGraph: false,
   collapsible: false,
   highlightDegree: 1,

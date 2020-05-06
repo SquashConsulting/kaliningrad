@@ -7,7 +7,12 @@ import useDetectKey from 'hooks/useDetectKey';
 import useStyles from './styles';
 import ModalContentWrapper from './ContentWrapper';
 
-const Modal = ({ children, name, title }) => {
+/* Exports */
+export default Modal;
+
+/* Module Functions */
+
+function Modal({ children, name, title }) {
   const classes = useStyles();
 
   const {
@@ -55,6 +60,4 @@ const Modal = ({ children, name, title }) => {
       </Slide>
     </MuiModal>
   );
-};
-
-export default Modal;
+}

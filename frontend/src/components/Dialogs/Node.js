@@ -12,14 +12,23 @@ import DialogContent from '@material-ui/core/DialogContent';
 import { UIContext } from 'contexts/ui';
 import { GraphContext } from 'contexts/graph';
 
+import { UI } from './data';
 import useStyles from './styles';
 import DialogCore from './_Dialog';
+import { validateNodes } from './utils/validators';
 
+/* Constants */
+
+const DEFAULT_STATE = { label: '', collection: '' };
+
+/* Exports */
+
+export default Dialog;
 export const TYPE = 'node';
 
-const defaultState = { label: '', collection: '' };
+/* Module Functions */
 
-export const Dialog = () => {
+function Dialog() {
   const classes = useStyles();
 
   const {
@@ -33,36 +42,34 @@ export const Dialog = () => {
   } = useContext(UIContext);
 
   const [error, setError] = useState(null);
-  const [state, setState] = useState(defaultState);
+  const [state, setState] = useState(DEFAULT_STATE);
 
   useEffect(() => {
     if (!open) {
       setError(null);
-      setState(defaultState);
+      setState(DEFAULT_STATE);
     }
   }, [open]);
 
   const handler = () => {
     const { collection, label } = state;
 
-    if (!(collection && label)) return setError('All the fields are required');
-
-    if (nodes.find(node => node.label === label))
-      return setError('A node with that label already exists.');
+    const errorMessage = validateNodes(nodes, collection, label);
+    if (errorMessage) return setError(errorMessage);
 
     const count = __meta__[collection] + 1;
+    const id = `${collection}/${count}`;
 
-    addNode({ label, collection, id: `${collection}/${count}` });
-
+    addNode({ label, collection, id });
     setDialogs(TYPE)(false);
   };
 
-  const handleChange = field => ({ target: { value } }) => {
+  const handleChange = (field) => ({ target: { value } }) => {
     setState({ ...state, [field]: value });
   };
 
   const renderOptions = () =>
-    Object.keys(collections).map(collection => (
+    Object.keys(collections).map((collection) => (
       <MenuItem
         key={collection}
         value={collection}
@@ -75,8 +82,8 @@ export const Dialog = () => {
   return (
     <DialogCore
       name={TYPE}
-      title="Create a node"
-      action={{ handler, label: 'Create' }}
+      title={UI.Dialog.Node.title}
+      action={{ handler, label: UI.Dialog.Node.actionLabel }}
     >
       <DialogContent>
         <form className={classes.container}>
@@ -101,8 +108,8 @@ export const Dialog = () => {
                 required
                 id="label"
                 margin="dense"
-                label="Display Label"
                 value={state.label}
+                label="Display Label"
                 onChange={handleChange('label')}
               />
             </FormControl>
@@ -116,4 +123,4 @@ export const Dialog = () => {
       </DialogContent>
     </DialogCore>
   );
-};
+}

@@ -12,6 +12,8 @@ import filterObject from 'utils/filterObject';
  * @typedef {{ id: string, label: string, collection: string, size?: number }} Node
  */
 
+/* Constants */
+
 const localState = window.localStorage.getItem('kalinigrad_state');
 const initialState = {
   __meta__: {
@@ -59,22 +61,32 @@ const initialState = {
 const _defaultState = localState ? JSON.parse(localState) : initialState;
 const defaultState = _defaultState.nodes.length ? _defaultState : initialState;
 
+/* Exports */
+
+export default GraphContextProvider;
 export const GraphContext = createContext(defaultState);
 
-const GraphContextProvider = ({ children }) => {
+/* Module Functions */
+
+function GraphContextProvider({ children }) {
   const [data, setData] = useState(defaultState);
 
   //***************//
   // Graph Actions //
   //***************//
 
+  /**
+   * Updates the state and saves it into the Browser's local storage
+   *
+   * @param {GraphState} newState
+   */
   const updateState = (newState) => {
     setData(newState);
     window.localStorage.setItem('kalinigrad_state', JSON.stringify(newState));
   };
 
   /**
-   *
+   * Resets the graph into the initial state
    */
   const resetGraph = () => {
     updateState(initialState);
@@ -258,6 +270,4 @@ const GraphContextProvider = ({ children }) => {
       {children}
     </GraphContext.Provider>
   );
-};
-
-export default GraphContextProvider;
+}

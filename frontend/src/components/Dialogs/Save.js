@@ -8,11 +8,17 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import { UIContext } from 'contexts/ui';
 import { GraphContext } from 'contexts/graph';
 
+import { UI } from './data';
 import DialogCore from './_Dialog';
 
+/* Exports */
+
+export default Dialog;
 export const TYPE = 'save';
 
-export const Dialog = () => {
+/* Module Functions */
+
+function Dialog() {
   const [name, setName] = useState('');
   const [error, setError] = useState(false);
   const { data } = useContext(GraphContext);
@@ -30,21 +36,20 @@ export const Dialog = () => {
       type: 'application/json',
     });
 
-    FileSaver.saveAs(blob, `${name}.json`);
+    const fileName = name.endsWith('.json') ? name : `${name}.json`;
+
+    FileSaver.saveAs(blob, fileName);
     setDialogs(TYPE)(false);
   };
 
   return (
     <DialogCore
       name={TYPE}
-      title="Download your graph"
-      action={{ handler, label: 'Download' }}
+      title={UI.Dialog.Save.title}
+      action={{ handler, label: UI.Dialog.Save.actionLabel }}
     >
       <DialogContent>
-        <DialogContentText>
-          Please note that this file must be processed through Kalinigrad{' '}
-          <b>only</b>.
-        </DialogContentText>
+        <DialogContentText>{UI.Dialog.Save.ContentText}</DialogContentText>
         <TextField
           required
           autoFocus
@@ -52,9 +57,9 @@ export const Dialog = () => {
           value={name}
           error={error}
           onChange={handleNameChange}
-          label="File Name (we will append .json)"
+          label="File Name (we will append `.json`)"
         />
       </DialogContent>
     </DialogCore>
   );
-};
+}

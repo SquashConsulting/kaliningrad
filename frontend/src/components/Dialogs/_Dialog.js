@@ -7,13 +7,19 @@ import DialogActions from '@material-ui/core/DialogActions';
 
 import { UIContext } from 'contexts/ui';
 
-const _Dialog = ({
+/* Exports */
+
+export default _Dialog;
+
+/* Module Functions */
+
+function _Dialog({
   name,
   title,
   children,
   action: { handler, label },
   ...rest
-}) => {
+}) {
   const {
     setDialogs,
     dialogs: { [name]: open },
@@ -21,24 +27,24 @@ const _Dialog = ({
 
   const dialogHandler = setDialogs(name);
 
-  const handleClose = () => {
+  const closeDialog = () => {
     dialogHandler(false);
   };
 
-  const handleClick = handler || handleClose;
+  const handleClick = handler || closeDialog;
 
   return (
     <Dialog
       fullWidth
       open={open}
-      onClose={handleClose}
+      onClose={closeDialog}
       aria-labelledby="form-dialog-title"
       {...rest}
     >
       <DialogTitle id="form-dialog-title">{title}</DialogTitle>
       {children}
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
+        <Button onClick={closeDialog} color="primary">
           Cancel
         </Button>
         <Button onClick={handleClick} color="primary" variant="contained">
@@ -47,6 +53,4 @@ const _Dialog = ({
       </DialogActions>
     </Dialog>
   );
-};
-
-export default _Dialog;
+}
