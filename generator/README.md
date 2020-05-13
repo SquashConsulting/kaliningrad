@@ -4,20 +4,22 @@ CLI program that generates a project from given configuration.
 
 # Usage
 
+```sh
+$ kaliningrad <command> [options]
 ```
-Usage: kaliningrad <command> [options]
 
-Commands:
-  kaliningrad generate  generates a project with given configuration
+To generate a project with a given graph structure, you need to run:
 
-Options:
-  --version     Show version number                                    [boolean]
-  --config, -c  Loads a Kaliningrad configuration file                 [required]
-  -h, --help    Show help                                              [boolean]
-
-Examples:
-  kaliningrad generate -f kaliningrad.json  generates a new project with given
-  user_service                              configs in the specified directory
-
-copyright 2020 @ Squash Consulting
+```sh
+$ kaliningrad generate --config <PATH_TO_YOUR_CONFIG>.json <NAME_OF_YOUR_PROJECT>
 ```
+
+For example:
+
+```sh
+$ kaliningrad generate --config ~/Graphs/knowlegdge_graph.json my_awesome_startup
+```
+
+Currently this creates a [Foxx](https://www.arangodb.com/docs/stable/foxx.html) microservice and exposes a CRUD API according to the given configuration.
+
+Copyright 2020 @ Squash Consulting
