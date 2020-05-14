@@ -5,3 +5,6 @@
 	path = foxx_typescript
 	url = git@github.com:SquashConsulting/foxx_typescript.git
 	branch = next
+[submodule "parser"]
+	path = parser
+	url = git@github.com:SquashConsulting/kaliningrad-parser.git
