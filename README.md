@@ -2,6 +2,8 @@
 
 Template Based Database Modeler Leveraging Power of Multi-Model Data Stores.
 
+![](https://github.com/SquashConsulting/kaliningrad/blob/master/kaliningrad.gif)
+
 Since our software heavily relies on Graph databases we, at first, decided to name it Königsberg as a reference to a famous graph theory problem called ["The Travelling Salesman Problem"](https://en.wikipedia.org/wiki/Travelling_salesman_problem). However having an umlaut(ö) in the repository name caused some problems; thus, we chose _Kaliningrad_ which is the name that was chosen for Königsberg after the World War 2.
 
 # Project Structure
